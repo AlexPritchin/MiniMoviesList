@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Formik } from 'formik';
+import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from '@tanstack/react-query';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -20,6 +20,7 @@ interface LoginFormValues {
 }
 
 const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
+  const formRef = useRef<FormikProps<LoginFormValues>>(null);
 
   const initialValues: LoginFormValues = { email: '', password: '' };
   const validationSchema = Yup.object({
@@ -55,6 +56,7 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
             Log in to proceed
           </Text>
           <Formik
+            innerRef={formRef}
             initialValues={initialValues}
             validationSchema={validationSchema}
             validateOnMount
@@ -70,6 +72,7 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
             {({ handleChange, handleBlur, handleSubmit, values, touched, errors, isValid }) => {
               const showEmailError = errors.email && touched.email;
               const showPasswordError = errors.password && touched.password;
+
               return (
                 <View
                   style={{
@@ -149,7 +152,13 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
         <BottomPressableText
           messageText="Don't have an account yet? "
           actionText='Sign Up'
-          onPress={() => navigation.navigate('Register')}
+          onPress={() => {
+            formRef.current?.resetForm();
+            setTimeout(() => {
+              formRef.current?.validateForm();
+            }, 10);
+            navigation.navigate('Register');
+          }}
         />
       </View>
     </TouchableWithoutFeedback>

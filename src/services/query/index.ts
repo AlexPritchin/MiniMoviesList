@@ -1,3 +1,3 @@
-import { logInUser } from "./mutations";
+import { logInUser, registerUser } from "./mutations";
 
-export { logInUser };
+export { logInUser, registerUser };
