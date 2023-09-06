@@ -1,9 +1,13 @@
 import React from 'react';
-import { Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, Alert } from 'react-native';
+import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { useMutation } from '@tanstack/react-query';
+import Spinner from 'react-native-loading-spinner-overlay';
 
+import { logInUser } from '../../services/query';
+import FormSubmitButton from '../../components/auth/FormSubmitButton';
 import BottomPressableText from '../../components/auth/BottomPressableText';
 
 import { AuthStackParamList } from '../../routes/types';
@@ -23,9 +27,18 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
     password: Yup.string().required('This field is required'),
   });
 
+  const {mutate, isLoading} = useMutation({
+    mutationFn: logInUser,
+    //onError: (err) => console.log(err),
+    onSuccess: async () => {
+      navigation.navigate('Main');
+    },
+  });
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={{ flex:1 }}>
+        <Spinner visible={isLoading} />
         <Text
           style={{
             width: '100%',
@@ -45,12 +58,13 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
             initialValues={initialValues}
             validationSchema={validationSchema}
             validateOnMount
-            onSubmit={values => {
-              console.log(values);
-              Alert.alert(
-                'Values',
-                `Email: ${values.email}\nPassword: ${values.password}`
-              );
+            onSubmit={(values, { resetForm, validateForm }) => {
+              Keyboard.dismiss();
+              setTimeout(() => {
+                mutate({email: values.email, password: values.password});
+                resetForm();
+                validateForm();
+              }, 10);
             }}
           >
             {({ handleChange, handleBlur, handleSubmit, values, touched, errors, isValid }) => {
@@ -122,19 +136,11 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
                       {errors.password}
                     </Text>
                   )}
-                  <TouchableOpacity
-                    style={{
-                      paddingVertical: 11,
-                      paddingHorizontal: 22,
-                      borderRadius: 8,
-                      backgroundColor: !isValid ? 'lightgrey' : 'lightskyblue',
-                      marginTop: 30,
-                    }}
+                  <FormSubmitButton
                     onPress={() => handleSubmit()}
                     disabled={!isValid}
-                  >
-                    <Text style={{ fontSize: 20 }}>Sign In</Text>
-                  </TouchableOpacity>
+                    title='Sign In'
+                  />
                 </View>
               );
             }}
