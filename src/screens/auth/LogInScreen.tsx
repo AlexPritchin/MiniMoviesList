@@ -10,9 +10,9 @@ import { logInUser } from '../../services/query';
 import FormSubmitButton from '../../components/auth/FormSubmitButton';
 import BottomPressableText from '../../components/auth/BottomPressableText';
 
-import { AuthStackParamList } from '../../routes/types';
+import { MainStackParamList } from '../../routes/types';
 
-type ScreenProps = NativeStackScreenProps<AuthStackParamList, 'LogIn'>;
+type ScreenProps = NativeStackScreenProps<MainStackParamList, 'AuthLogIn'>;
 
 interface LoginFormValues {
   email: string;
@@ -157,7 +157,7 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
             setTimeout(() => {
               formRef.current?.validateForm();
             }, 10);
-            navigation.navigate('Register');
+            navigation.navigate('AuthRegister');
           }}
         />
       </View>

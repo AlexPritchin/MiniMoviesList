@@ -1,5 +1,5 @@
-export type AuthStackParamList = {
-  LogIn: undefined;
-  Register: undefined;
+export type MainStackParamList = {
+  AuthLogIn: undefined;
+  AuthRegister: undefined;
   Main: undefined;
 };

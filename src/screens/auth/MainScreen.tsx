@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { AuthStackParamList } from '../../routes/types';
+import { MainStackParamList } from '../../routes/types';
 
-type ScreenProps = NativeStackScreenProps<AuthStackParamList, 'Main'>;
+type ScreenProps = NativeStackScreenProps<MainStackParamList, 'Main'>;
 
 const MainScreen: React.FC<ScreenProps> = ({ navigation }) => {
   return (

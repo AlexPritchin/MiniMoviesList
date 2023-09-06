@@ -11,9 +11,9 @@ import { registerUser } from '../../services/query';
 import FormSubmitButton from '../../components/auth/FormSubmitButton';
 import BottomPressableText from '../../components/auth/BottomPressableText';
 
-import { AuthStackParamList } from '../../routes/types';
+import { MainStackParamList } from '../../routes/types';
 
-type ScreenProps = NativeStackScreenProps<AuthStackParamList, 'Register'>;
+type ScreenProps = NativeStackScreenProps<MainStackParamList, 'AuthRegister'>;
 
 interface RegisterFormValues {
   email: string;
