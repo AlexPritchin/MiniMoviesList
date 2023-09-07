@@ -32,7 +32,7 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
     mutationFn: logInUser,
     //onError: (err) => console.log(err),
     onSuccess: async () => {
-      navigation.navigate('Main');
+      navigation.navigate('MoviesList');
     },
   });
 

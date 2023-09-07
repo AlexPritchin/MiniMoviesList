@@ -1,10 +1,12 @@
+import { TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { MaterialIcons } from '@expo/vector-icons';
 
 import { MainStackParamList } from './types';
 
 import LogInScreen from '../screens/auth/LogInScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
-import MainScreen from '../screens/auth/MainScreen';
+import MoviesListScreen from '../screens/movies/ListScreen';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 
@@ -22,8 +24,23 @@ const MainStack: React.FC = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name='Main'
-        component={MainScreen}
+        name='MoviesList'
+        component={MoviesListScreen}
+        options={({navigation}) => ({
+          headerStyle: {
+            backgroundColor: 'aliceblue',
+          },
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => navigation.popToTop()}>
+              <MaterialIcons name='logout' size={24}/>
+            </TouchableOpacity>
+          ),
+          headerTitle: 'Movies List',
+          headerTitleStyle: {
+            fontSize: 24,
+          },
+        })}
       />
     </Stack.Navigator>
   );

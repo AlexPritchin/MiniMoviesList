@@ -49,7 +49,7 @@ const RegisterScreen: React.FC<ScreenProps> = ({ navigation }) => {
     mutationFn: registerUser,
     //onError: (err) => console.log(err),
     onSuccess: async () => {
-      navigation.navigate('Main');
+      navigation.navigate('MoviesList');
     },
   });
 
