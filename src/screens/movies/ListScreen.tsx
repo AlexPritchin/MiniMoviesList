@@ -1,76 +1,27 @@
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useQuery } from '@tanstack/react-query';
+
+import { getMoviesList } from '../../services/query';
+import { getMovieListItems } from '../../helpers/moviesHelpers';
+import FullScreenSpinnerCentered from '../../components/FullScreenSpinnerCentered';
 
 import { MainStackParamList } from '../../routes/types';
+import { MovieItem } from '../../types/moviesTypes';
 
 type ScreenProps = NativeStackScreenProps<MainStackParamList, 'MoviesList'>;
 
 const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
-  const testData = [
+  const {data: moviesList, isLoading} = useQuery(
+    ['getMoviesList'],
+    getMoviesList,
     {
-      id: 1,
-      title: 'Test 1',
-      year: '2001',
-      format: 'DVD', 
+      select: getMovieListItems,
     },
-    {
-      id: 2,
-      title: 'Test 2',
-      year: '2002',
-      format: 'DVD', 
-    },
-    {
-      id: 3,
-      title: 'Test 3',
-      year: '2003',
-      format: 'DVD', 
-    },
-    {
-      id: 4,
-      title: 'Test 4',
-      year: '2004',
-      format: 'DVD', 
-    },
-    {
-      id: 5,
-      title: 'Test 5',
-      year: '2005',
-      format: 'DVD', 
-    },
-    {
-      id: 6,
-      title: 'Test 6',
-      year: '2006',
-      format: 'DVD', 
-    },
-    {
-      id: 7,
-      title: 'Test 7',
-      year: '2007',
-      format: 'DVD', 
-    },
-    {
-      id: 8,
-      title: 'Test 8',
-      year: '2008',
-      format: 'DVD', 
-    },
-    {
-      id: 9,
-      title: 'Test 9',
-      year: '2009',
-      format: 'DVD', 
-    },
-    {
-      id: 10,
-      title: 'Test 10',
-      year: '2010',
-      format: 'DVD', 
-    },
-  ];
+  );
 
-  const renderListItem = (item: any) => {
+  const renderListItem = (item: MovieItem) => {
     return (
       <View style={{ gap: 10 }}>
         <Text style={{ fontSize: 24 }}>{item.title}</Text>
@@ -80,21 +31,32 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
     );
   }
 
+  const renderSeparator = () => {
+    return <View style={{ height: 1, marginVertical: 25, marginLeft: 15, backgroundColor: 'grey' }}/>;
+  }
+
   return (
-    <FlatList
-      data={testData}
-      renderItem={(data) => renderListItem(data.item)}
-      style={{
-        backgroundColor: 'white',
-      }}
-      contentContainerStyle={{
-        paddingHorizontal: 30,
-        paddingTop: 20,
-        paddingBottom: 40,
-        backgroundColor: 'white',
-      }}
-      ItemSeparatorComponent={() => (<View style={{ height: 1, marginVertical: 25, marginLeft: 15, backgroundColor: 'grey' }} />)}
-    />
+    <>
+      {isLoading
+      ?
+        <FullScreenSpinnerCentered />
+      : 
+        <FlatList
+          data={moviesList}
+          renderItem={(data) => renderListItem(data.item)}
+          style={{
+            backgroundColor: 'white',
+          }}
+          contentContainerStyle={{
+            paddingHorizontal: 30,
+            paddingTop: 20,
+            paddingBottom: 40,
+            backgroundColor: 'white',
+          }}
+          ItemSeparatorComponent={() => renderSeparator()}
+        />
+      }
+    </>
   );
 }
 

@@ -1,3 +1,9 @@
-import { logInUser, registerUser } from "./mutations";
+import { logInUser, registerUser } from './mutations';
+import { getMoviesList } from './queries';
 
-export { logInUser, registerUser };
+export {
+  logInUser,
+  registerUser,
+
+  getMoviesList,
+};
