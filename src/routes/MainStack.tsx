@@ -7,12 +7,23 @@ import { MainStackParamList } from './types';
 import LogInScreen from '../screens/auth/LogInScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import MoviesListScreen from '../screens/movies/ListScreen';
+import AddMovieScreen from '../screens/movies/AddMovieScreen';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 
 const MainStack: React.FC = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: 'aliceblue',
+        },
+        headerTitleStyle: {
+          fontSize: 24,
+        },
+        headerBackTitleVisible: false,
+      }}
+    >
       <Stack.Screen
         name='AuthLogIn'
         component={LogInScreen}
@@ -27,20 +38,21 @@ const MainStack: React.FC = () => {
         name='MoviesList'
         component={MoviesListScreen}
         options={({navigation}) => ({
-          headerStyle: {
-            backgroundColor: 'aliceblue',
-          },
           headerLeft: () => (
             <TouchableOpacity
               onPress={() => navigation.popToTop()}>
-              <MaterialIcons name='logout' size={24}/>
+              <MaterialIcons name='logout' size={26}/>
             </TouchableOpacity>
           ),
           headerTitle: 'Movies List',
-          headerTitleStyle: {
-            fontSize: 24,
-          },
         })}
+      />
+      <Stack.Screen
+        name='MoviesAddMovie'
+        component={AddMovieScreen}
+        options={{
+          headerTitle: 'Add new movie',
+        }}
       />
     </Stack.Navigator>
   );

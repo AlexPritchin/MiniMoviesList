@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getMoviesList } from '../../services/query';
 import { getMovieListItems } from '../../helpers/moviesHelpers';
 import FullScreenSpinnerCentered from '../../components/FullScreenSpinnerCentered';
+import BottomFloatingActionButton from '../../components/movies/BottomFloatingActionButton';
 
 import { MainStackParamList } from '../../routes/types';
 import { MovieItem } from '../../types/moviesTypes';
@@ -14,7 +15,7 @@ type ScreenProps = NativeStackScreenProps<MainStackParamList, 'MoviesList'>;
 
 const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
   const {data: moviesList, isLoading} = useQuery(
-    ['getMoviesList'],
+    ['moviesList'],
     getMoviesList,
     {
       select: getMovieListItems,
@@ -41,20 +42,23 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
       ?
         <FullScreenSpinnerCentered />
       : 
-        <FlatList
-          data={moviesList}
-          renderItem={(data) => renderListItem(data.item)}
-          style={{
-            backgroundColor: 'white',
-          }}
-          contentContainerStyle={{
-            paddingHorizontal: 30,
-            paddingTop: 20,
-            paddingBottom: 40,
-            backgroundColor: 'white',
-          }}
-          ItemSeparatorComponent={() => renderSeparator()}
-        />
+        <>
+          <FlatList
+            data={moviesList}
+            renderItem={(data) => renderListItem(data.item)}
+            style={{
+              backgroundColor: 'white',
+            }}
+            contentContainerStyle={{
+              paddingHorizontal: 30,
+              paddingTop: 20,
+              paddingBottom: 40,
+              backgroundColor: 'white',
+            }}
+            ItemSeparatorComponent={() => renderSeparator()}
+          />
+          <BottomFloatingActionButton onPress={() => navigation.navigate('MoviesAddMovie')} />
+        </>
       }
     </>
   );

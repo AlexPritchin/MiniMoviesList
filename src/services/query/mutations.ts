@@ -1,3 +1,4 @@
+import { MovieFormatNameType } from '../../types/moviesTypes';
 import api from '../api/apiClient';
 
 interface LogInParams {
@@ -10,6 +11,13 @@ interface RegisterParams {
   name: string;
   password: string;
   confirmPassword: string;
+}
+
+interface AddMovieParams {
+  title: string;
+  year: number;
+  format: MovieFormatNameType;
+  actors: string[];
 }
 
 const logInUser = async (params: LogInParams) => {
@@ -32,4 +40,12 @@ const registerUser = async (params: RegisterParams) => {
     });
 };
 
-export { logInUser, registerUser };
+const addMovie = async (params: AddMovieParams) => {
+  return api
+    .post('movies', {
+      ...params,
+    })
+    .then((response) => response.data);
+};
+
+export { logInUser, registerUser, addMovie };

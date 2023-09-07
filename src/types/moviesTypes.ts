@@ -1,4 +1,4 @@
-export type MovieFormatNameType = 'DVD' | 'VHS' | 'Blu-ray';
+export type MovieFormatNameType = 'DVD' | 'VHS' | 'Blu-Ray';
 
 export type MovieItem = {
   id: string;

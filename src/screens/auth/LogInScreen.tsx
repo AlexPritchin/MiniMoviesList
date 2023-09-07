@@ -31,7 +31,7 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
   const {mutate, isLoading} = useMutation({
     mutationFn: logInUser,
     //onError: (err) => console.log(err),
-    onSuccess: async () => {
+    onSuccess: () => {
       navigation.navigate('MoviesList');
     },
   });

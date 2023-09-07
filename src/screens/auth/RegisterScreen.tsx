@@ -48,14 +48,14 @@ const RegisterScreen: React.FC<ScreenProps> = ({ navigation }) => {
   const {mutate, isLoading} = useMutation({
     mutationFn: registerUser,
     //onError: (err) => console.log(err),
-    onSuccess: async () => {
+    onSuccess: () => {
       navigation.navigate('MoviesList');
     },
   });
 
   return (
-      <KeyboardAwareScrollView style={{ flex:1 }} showsVerticalScrollIndicator={false}>
-        <View style={{ height: Dimensions.get('window').height }}>
+    <KeyboardAwareScrollView style={{ flex:1 }} showsVerticalScrollIndicator={false}>
+      <View style={{ height: Dimensions.get('window').height }}>
         <Spinner visible={isLoading} />
         <Text
           style={{
@@ -234,8 +234,8 @@ const RegisterScreen: React.FC<ScreenProps> = ({ navigation }) => {
           actionText='Sign In'
           onPress={() => navigation.pop()}
         />
-        </View>
-      </KeyboardAwareScrollView>
+      </View>
+    </KeyboardAwareScrollView>
   );
 };
 
