@@ -1,4 +1,4 @@
-import { MovieItem } from "../types/moviesTypes";
+import { MovieItem, MovieDetails } from "../types/moviesTypes";
 
 const getMovieListItems = (data: any): MovieItem[] => {
   return (data as Array<any>).map<MovieItem>((dataItem) => {
@@ -11,4 +11,16 @@ const getMovieListItems = (data: any): MovieItem[] => {
   });
 };
 
-export { getMovieListItems };
+const getMovieDetailsItem = (data: any): MovieDetails => {
+  const actorsNames = (data?.actors as any[]).map(actorData => actorData.name);
+
+  return {
+    id: data?.id,
+    title: data?.title,
+    year: data?.year,
+    format: data?.format,
+    actors: actorsNames
+  };
+};
+
+export { getMovieListItems, getMovieDetailsItem };

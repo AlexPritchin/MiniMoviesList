@@ -1,5 +1,9 @@
 import api from '../api/apiClient';
 
+interface MovieDetailsParams {
+  queryKey: [string, {movieId: string}];
+}
+
 const getMoviesList = async () => {
   return api
     .get('movies',{
@@ -12,4 +16,10 @@ const getMoviesList = async () => {
     .then((response) => response.data.data);
 };
 
-export { getMoviesList };
+const getMovieDetails = async ({queryKey: [, {movieId}]}: MovieDetailsParams) => {
+  return api
+    .get(`movies/${movieId}`)
+    .then((response) => response.data.data);
+};
+
+export { getMoviesList, getMovieDetails };

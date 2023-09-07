@@ -6,3 +6,11 @@ export type MovieItem = {
   year: string;
   format: MovieFormatNameType;
 };
+
+export type MovieDetails = {
+  id: string;
+  title: string;
+  year: string;
+  format: MovieFormatNameType;
+  actors: string[];
+};

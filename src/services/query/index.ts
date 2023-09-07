@@ -1,5 +1,5 @@
 import { logInUser, registerUser, addMovie, deleteMovie } from './mutations';
-import { getMoviesList } from './queries';
+import { getMoviesList, getMovieDetails } from './queries';
 
 export {
   logInUser,
@@ -8,4 +8,5 @@ export {
   deleteMovie,
 
   getMoviesList,
+  getMovieDetails,
 };

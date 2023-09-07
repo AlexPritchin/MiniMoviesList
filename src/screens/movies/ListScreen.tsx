@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, TouchableHighlight, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -63,11 +63,20 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
         onSwipeableOpen={() => closePrevOpenedListRow(index)}
         ref={(ref) => (rows[index] = ref)}
       >
-        <View style={{ gap: 10, paddingLeft: 30, paddingVertical: 20, backgroundColor: 'white' }}>
-          <Text style={{ fontSize: 24 }}>{item.title}</Text>
-          <Text style={{ fontSize: 18 }}>{item.year}</Text>
-          <Text style={{ fontSize: 18 }}>{item.format}</Text>
-        </View>
+        <TouchableHighlight
+          onPress={() =>
+            navigation.navigate('MoviesDetails', {
+              id: item.id,
+              title: item.title
+            })
+          }
+        >
+          <View style={{ gap: 10, paddingLeft: 30, paddingVertical: 20, backgroundColor: 'white' }}>
+            <Text style={{ fontSize: 24 }}>{item.title}</Text>
+            <Text style={{ fontSize: 18 }}>{item.year}</Text>
+            <Text style={{ fontSize: 18 }}>{item.format}</Text>
+          </View>
+        </TouchableHighlight>
       </Swipeable>
     );
   }
