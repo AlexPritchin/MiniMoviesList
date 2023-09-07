@@ -20,14 +20,16 @@ interface AddMovieParams {
   actors: string[];
 }
 
+interface DeleteMovieParams {
+  movieId: string;
+}
+
 const logInUser = async (params: LogInParams) => {
   return api
     .post('sessions', {
       ...params,
     })
-    .then((response) => {
-      console.log(response.data.token);
-    });
+    .then((response) => response.data);
 };
 
 const registerUser = async (params: RegisterParams) => {
@@ -35,9 +37,7 @@ const registerUser = async (params: RegisterParams) => {
     .post('users', {
       ...params,
     })
-    .then((response) => {
-      console.log(response.data.token);
-    });
+    .then((response) => response.data);
 };
 
 const addMovie = async (params: AddMovieParams) => {
@@ -48,4 +48,10 @@ const addMovie = async (params: AddMovieParams) => {
     .then((response) => response.data);
 };
 
-export { logInUser, registerUser, addMovie };
+const deleteMovie = async ({ movieId }: DeleteMovieParams) => {
+  return api
+    .delete(`movies/${movieId}`)
+    .then((response) => response.data);
+};
+
+export { logInUser, registerUser, addMovie, deleteMovie };

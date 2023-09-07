@@ -11,7 +11,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async function (config) {
-    if (config.url === 'movies') {
+    if (config.url?.includes('movies')) {
       const token = await SecureStore.getItemAsync('token');
       config.headers.Authorization = token;
     }

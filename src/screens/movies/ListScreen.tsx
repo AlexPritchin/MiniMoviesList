@@ -1,9 +1,10 @@
 import React from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
-import { getMoviesList } from '../../services/query';
+import { deleteMovie, getMoviesList } from '../../services/query';
 import { getMovieListItems } from '../../helpers/moviesHelpers';
 import FullScreenSpinnerCentered from '../../components/FullScreenSpinnerCentered';
 import BottomFloatingActionButton from '../../components/movies/BottomFloatingActionButton';
@@ -14,6 +15,8 @@ import { MovieItem } from '../../types/moviesTypes';
 type ScreenProps = NativeStackScreenProps<MainStackParamList, 'MoviesList'>;
 
 const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
+  const queryClient = useQueryClient();
+
   const {data: moviesList, isLoading} = useQuery(
     ['moviesList'],
     getMoviesList,
@@ -22,18 +25,55 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
     },
   );
 
-  const renderListItem = (item: MovieItem) => {
+  const {mutate} = useMutation({
+    mutationFn: deleteMovie,
+    //onError: (err) => console.log(err),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({queryKey: ['moviesList']});
+    },
+  });
+
+  let rows: (Swipeable | null)[] = [];
+  let prevOpenedRow: Swipeable | null;
+
+  const renderDeleteView = (movieIdToDelete: string) => {
     return (
-      <View style={{ gap: 10 }}>
-        <Text style={{ fontSize: 24 }}>{item.title}</Text>
-        <Text style={{ fontSize: 18 }}>{item.year}</Text>
-        <Text style={{ fontSize: 18 }}>{item.format}</Text>
-      </View>
+      <Pressable
+        style={{ width: 100, justifyContent: 'center', alignItems: 'center', backgroundColor: 'firebrick' }}
+        onPress={() => {
+          mutate({ movieId: movieIdToDelete });
+        }}
+      >
+        <Text style={{ fontSize: 20, color: 'white' }}>Delete</Text>
+      </Pressable>
+    );
+  }
+
+  const closePrevOpenedListRow = (index: number) => {
+    if (prevOpenedRow && prevOpenedRow !== rows[index])
+      prevOpenedRow.close();
+
+    prevOpenedRow = rows[index];
+  }
+
+  const renderListItem = (item: MovieItem, index: number) => {
+    return (
+      <Swipeable
+        renderRightActions={() => renderDeleteView(item.id)}
+        onSwipeableOpen={() => closePrevOpenedListRow(index)}
+        ref={(ref) => (rows[index] = ref)}
+      >
+        <View style={{ gap: 10, paddingLeft: 30, paddingVertical: 20, backgroundColor: 'white' }}>
+          <Text style={{ fontSize: 24 }}>{item.title}</Text>
+          <Text style={{ fontSize: 18 }}>{item.year}</Text>
+          <Text style={{ fontSize: 18 }}>{item.format}</Text>
+        </View>
+      </Swipeable>
     );
   }
 
   const renderSeparator = () => {
-    return <View style={{ height: 1, marginVertical: 25, marginLeft: 15, backgroundColor: 'grey' }}/>;
+    return <View style={{ height: 1, marginLeft: 45, marginRight: 30, backgroundColor: 'grey' }}/>;
   }
 
   return (
@@ -45,13 +85,11 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
         <>
           <FlatList
             data={moviesList}
-            renderItem={(data) => renderListItem(data.item)}
+            renderItem={({item, index}) => renderListItem(item, index)}
             style={{
               backgroundColor: 'white',
             }}
             contentContainerStyle={{
-              paddingHorizontal: 30,
-              paddingTop: 20,
               paddingBottom: 40,
               backgroundColor: 'white',
             }}
