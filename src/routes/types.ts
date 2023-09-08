@@ -4,4 +4,5 @@ export type MainStackParamList = {
   MoviesList: undefined;
   MoviesAddMovie: undefined;
   MoviesDetails: {id: string; title: string;};
+  MoviesSearch: undefined;
 };

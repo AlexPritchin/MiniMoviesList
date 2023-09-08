@@ -5,8 +5,9 @@ interface MovieListParams {
   queryKey: [
     string,
     {
-      sortBy: MovieListSortNameType,
-      orderBy: MovieListOrderNameType,
+      sort?: MovieListSortNameType,
+      order?: MovieListOrderNameType,
+      search?: string,
     }
   ];
 }
@@ -15,14 +16,14 @@ interface MovieDetailsParams {
   queryKey: [string, {movieId: string}];
 }
 
-const getMoviesList = async ({queryKey: [, {sortBy, orderBy}]}: MovieListParams) => {
+const getMoviesList = async ({queryKey: [, {order = 'DESC', ...restParams}]}: MovieListParams) => {
   return api
     .get('movies',{
       params: {
         limit: 100,
         offset: 0,
-        sort: sortBy,
-        order: orderBy,
+        order,
+        ...restParams
       },
     })
     .then((response) => response.data.data);

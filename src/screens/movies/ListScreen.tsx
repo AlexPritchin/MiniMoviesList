@@ -4,16 +4,18 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import ModalSelector from 'react-native-modal-selector';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import { deleteMovie, getMoviesList, importMovies } from '../../services/query';
 import { getMovieListItems, pickMoviesFileForImport } from '../../helpers/moviesHelpers';
+import HeaderButton from '../../components/HeaderButton';
 import FullScreenSpinnerCentered from '../../components/FullScreenSpinnerCentered';
 import BottomFloatingActionButton from '../../components/movies/BottomFloatingActionButton';
-import HeaderButton from '../../components/HeaderButton';
+import ListDeleteItemView from '../../components/movies/ListDeleteItemView';
+import ListTouchableItem from '../../components/movies/ListTouchableItem';
 
 import { MainStackParamList } from '../../routes/types';
 import { MovieItem, MovieListSortNameType } from '../../types/moviesTypes';
-import Spinner from 'react-native-loading-spinner-overlay';
 
 type ScreenProps = NativeStackScreenProps<MainStackParamList, 'MoviesList'>;
 
@@ -21,7 +23,12 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginRight: -7 }}>
+          <HeaderButton
+            onPress={() => navigation.navigate('MoviesSearch')}
+            iconName='search'
+            iconSize={28}
+          />
           <HeaderButton
             onPress={() => setSortPickerVisible(true)}
             iconName='sort'
@@ -36,7 +43,7 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
             iconName='file-upload'
             iconSize={28}
           />
-        </>
+        </View>
       ),
     })
   }, [navigation]);
@@ -70,8 +77,8 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
   const {data: moviesList, isLoading: listQueryLoading} = useQuery(
     ['moviesList',
       {
-        sortBy: sortByOption,
-        orderBy: sortByOption === 'title' ? 'ASC' : 'DESC',
+        sort: sortByOption,
+        order: sortByOption === 'title' ? 'ASC' : 'DESC',
       }
     ],
     getMoviesList,
@@ -101,14 +108,11 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
 
   const renderDeleteView = (movieIdToDelete: string) => {
     return (
-      <Pressable
-        style={{ width: 100, justifyContent: 'center', alignItems: 'center', backgroundColor: 'firebrick' }}
+      <ListDeleteItemView
         onPress={() => {
           mutateDelete({ movieId: movieIdToDelete });
         }}
-      >
-        <Text style={{ fontSize: 20, color: 'white' }}>Delete</Text>
-      </Pressable>
+      />
     );
   }
 
@@ -126,20 +130,15 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
         onSwipeableOpen={() => closePrevOpenedListRow(index)}
         ref={(ref) => (rows[index] = ref)}
       >
-        <TouchableHighlight
+        <ListTouchableItem
           onPress={() =>
             navigation.navigate('MoviesDetails', {
               id: item.id,
               title: item.title
             })
           }
-        >
-          <View style={{ gap: 10, paddingLeft: 30, paddingVertical: 20, backgroundColor: 'white' }}>
-            <Text style={{ fontSize: 24 }}>{item.title}</Text>
-            <Text style={{ fontSize: 18 }}>{item.year}</Text>
-            <Text style={{ fontSize: 18 }}>{item.format}</Text>
-          </View>
-        </TouchableHighlight>
+          movieItem={item}
+        />
       </Swipeable>
     );
   }

@@ -8,6 +8,7 @@ import RegisterScreen from '../screens/auth/RegisterScreen';
 import MoviesListScreen from '../screens/movies/ListScreen';
 import AddMovieScreen from '../screens/movies/AddMovieScreen';
 import MovieDetailsScreen from '../screens/movies/MovieDetailsScreen';
+import SearchMoviesScreen from '../screens/movies/SearchMoviesScreen';
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 
@@ -60,6 +61,13 @@ const MainStack: React.FC = () => {
         options={({route}) => ({
           headerTitle: route.params?.title,
         })}
+      />
+      <Stack.Screen
+        name='MoviesSearch'
+        component={SearchMoviesScreen}
+        options={{
+          headerTitle: 'Search movies',
+        }}
       />
     </Stack.Navigator>
   );
