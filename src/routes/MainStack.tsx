@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as SecureStore from 'expo-secure-store';
 
@@ -47,6 +48,7 @@ const MainStack: React.FC = () => {
                 navigation.popToTop();
               }}
               iconName='logout'
+              style={{ marginRight: Platform.OS === 'android' ? 30 : 0 }}
             />
           ),
           headerTitle: 'Movies List',
