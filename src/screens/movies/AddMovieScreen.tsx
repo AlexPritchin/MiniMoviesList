@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, Keyboard, Pressable, Text, TextInput, View } from 'react-native';
+import { Alert, Dimensions, Keyboard, Pressable, Text, TextInput, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FieldArray, Formik } from 'formik';
 import * as Yup from 'yup';
@@ -69,6 +69,7 @@ const AddMovieScreen: React.FC<ScreenProps> = ({ navigation }) => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({queryKey: ['moviesList']});
       navigation.pop();
+      Alert.alert('Success', 'New movie added');
     },
   });
 
