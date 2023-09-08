@@ -1,9 +1,8 @@
-import { TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { MaterialIcons } from '@expo/vector-icons';
 
 import { MainStackParamList } from './types';
 
+import HeaderButton from '../components/HeaderButton';
 import LogInScreen from '../screens/auth/LogInScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 import MoviesListScreen from '../screens/movies/ListScreen';
@@ -40,10 +39,10 @@ const MainStack: React.FC = () => {
         component={MoviesListScreen}
         options={({navigation}) => ({
           headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => navigation.popToTop()}>
-              <MaterialIcons name='logout' size={26}/>
-            </TouchableOpacity>
+            <HeaderButton
+              onPress={() => navigation.popToTop()}
+              iconName='logout'
+            />
           ),
           headerTitle: 'Movies List',
         })}

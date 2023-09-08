@@ -1,24 +1,67 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, Pressable, Text, TouchableHighlight, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import ModalSelector from 'react-native-modal-selector';
 
 import { deleteMovie, getMoviesList } from '../../services/query';
 import { getMovieListItems } from '../../helpers/moviesHelpers';
 import FullScreenSpinnerCentered from '../../components/FullScreenSpinnerCentered';
 import BottomFloatingActionButton from '../../components/movies/BottomFloatingActionButton';
+import HeaderButton from '../../components/HeaderButton';
 
 import { MainStackParamList } from '../../routes/types';
-import { MovieItem } from '../../types/moviesTypes';
+import { MovieItem, MovieListSortNameType } from '../../types/moviesTypes';
 
 type ScreenProps = NativeStackScreenProps<MainStackParamList, 'MoviesList'>;
 
 const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderButton
+          onPress={() => setSortPickerVisible(true)}
+          iconName='sort'
+          iconSize={30}
+        />
+      ),
+    })
+  }, [navigation]);
+
   const queryClient = useQueryClient();
 
+  const sortPickerData = [
+    {
+      key: 0,
+      section: true,
+      label: 'Sort list by',
+    },
+    {
+      key: 1,
+      label: 'Id',
+    },
+    {
+      key: 2,
+      label: 'Title',
+    },
+    {
+      key: 3,
+      label: 'Year',
+    },
+  ];
+
+  const [sortByOption, setSortByOption] = useState<MovieListSortNameType>('id');
+  const [sortPickerSelectedKey, setSortPickerSelectedKey] = useState(1);
+  const [sortPickerVisible, setSortPickerVisible] = useState(false);
+
   const {data: moviesList, isLoading} = useQuery(
-    ['moviesList'],
+    ['moviesList',
+      {
+        sortBy: sortByOption,
+        orderBy: sortByOption === 'title' ? 'ASC' : 'DESC',
+      }
+    ],
     getMoviesList,
     {
       select: getMovieListItems,
@@ -92,6 +135,24 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
         <FullScreenSpinnerCentered />
       : 
         <>
+          <ModalSelector
+            data={sortPickerData}
+            supportedOrientations={['portrait']}
+            cancelText='Cancel'
+            selectedKey={sortPickerSelectedKey}
+            visible={sortPickerVisible}
+            customSelector={(<></>)}
+            selectedItemTextStyle={{ fontWeight: 'bold', fontSize: 20 }}
+            sectionTextStyle={{ fontWeight: '600', fontSize: 20 }}
+            onChange={(option)=>{
+              if (!option.label)
+                return;
+              setSortByOption(option.label.toLowerCase() as MovieListSortNameType);
+              setSortPickerSelectedKey(option.key);
+              setSortPickerVisible(false);
+            }}
+            onModalClose={() => setSortPickerVisible(false)}
+          />
           <FlatList
             data={moviesList}
             renderItem={({item, index}) => renderListItem(item, index)}

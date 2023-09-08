@@ -22,7 +22,7 @@ interface LoginFormValues {
 const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
   const formRef = useRef<FormikProps<LoginFormValues>>(null);
 
-  const initialValues: LoginFormValues = { email: '', password: '' };
+  const initialValues: LoginFormValues = { email: 'test1@mail.com', password: 'qwerty' };
   const validationSchema = Yup.object({
     email: Yup.string().required('This field is required'),
     password: Yup.string().required('This field is required'),

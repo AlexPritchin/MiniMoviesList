@@ -1,16 +1,28 @@
+import { MovieListOrderNameType, MovieListSortNameType } from '../../types/moviesTypes';
 import api from '../api/apiClient';
+
+interface MovieListParams {
+  queryKey: [
+    string,
+    {
+      sortBy: MovieListSortNameType,
+      orderBy: MovieListOrderNameType,
+    }
+  ];
+}
 
 interface MovieDetailsParams {
   queryKey: [string, {movieId: string}];
 }
 
-const getMoviesList = async () => {
+const getMoviesList = async ({queryKey: [, {sortBy, orderBy}]}: MovieListParams) => {
   return api
     .get('movies',{
       params: {
         limit: 100,
         offset: 0,
-        order: 'DESC',
+        sort: sortBy,
+        order: orderBy,
       },
     })
     .then((response) => response.data.data);

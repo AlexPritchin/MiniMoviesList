@@ -26,6 +26,26 @@ interface RegisterFormValues {
 const AddMovieScreen: React.FC<ScreenProps> = ({ navigation }) => {
   const queryClient = useQueryClient();
 
+  const formatPickerData = [
+    {
+      key: 0,
+      section: true,
+      label: 'Movie format',
+    },
+    {
+      key: 1,
+      label: 'DVD',
+    },
+    {
+      key: 2,
+      label: 'VHS',
+    },
+    {
+      key: 3,
+      label: 'Blu-Ray',
+    },
+  ];
+
   const initialValues: RegisterFormValues = {
     title: '',
     year: '2021',
@@ -51,21 +71,6 @@ const AddMovieScreen: React.FC<ScreenProps> = ({ navigation }) => {
       navigation.pop();
     },
   });
-
-  const formatPickerData = [
-    {
-      key: 0,
-      label: 'DVD',
-    },
-    {
-      key: 1,
-      label: 'VHS',
-    },
-    {
-      key: 2,
-      label: 'Blu-Ray',
-    },
-  ];
 
   return (
     <KeyboardAwareScrollView style={{ flex:1 }} showsVerticalScrollIndicator={false}>
@@ -157,14 +162,12 @@ const AddMovieScreen: React.FC<ScreenProps> = ({ navigation }) => {
                 <ModalSelector
                   data={formatPickerData}
                   supportedOrientations={['portrait']}
-                  accessible={true}
-                  scrollViewAccessibilityLabel={'Scrollable options'}
-                  cancelButtonAccessibilityLabel={'Cancel Button'}
                   cancelText='Cancel'
                   onChange={(option)=>{setFieldValue('format', option.label)}}
                   style={{ width: '100%' }}
                   selectedItemTextStyle={{ fontWeight: 'bold', fontSize: 20 }}
-                  selectedKey={0}
+                  sectionTextStyle={{ fontWeight: '600', fontSize: 20 }}
+                  selectedKey={1}
                 >
                     <TextInput
                       value={values.format}
