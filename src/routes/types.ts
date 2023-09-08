@@ -1,5 +1,8 @@
-export type AuthStackParamList = {
-  LogIn: undefined;
-  Register: undefined;
-  Main: undefined;
+export type MainStackParamList = {
+  AuthLogIn: undefined;
+  AuthRegister: undefined;
+  MoviesList: undefined;
+  MoviesAddMovie: undefined;
+  MoviesDetails: {id: string; title: string;};
+  MoviesSearch: undefined;
 };

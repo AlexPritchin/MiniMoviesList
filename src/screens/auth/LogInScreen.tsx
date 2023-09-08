@@ -10,9 +10,9 @@ import { logInUser } from '../../services/query';
 import FormSubmitButton from '../../components/auth/FormSubmitButton';
 import BottomPressableText from '../../components/auth/BottomPressableText';
 
-import { AuthStackParamList } from '../../routes/types';
+import { MainStackParamList } from '../../routes/types';
 
-type ScreenProps = NativeStackScreenProps<AuthStackParamList, 'LogIn'>;
+type ScreenProps = NativeStackScreenProps<MainStackParamList, 'AuthLogIn'>;
 
 interface LoginFormValues {
   email: string;
@@ -22,7 +22,7 @@ interface LoginFormValues {
 const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
   const formRef = useRef<FormikProps<LoginFormValues>>(null);
 
-  const initialValues: LoginFormValues = { email: '', password: '' };
+  const initialValues: LoginFormValues = { email: 'test1@mail.com', password: 'qwerty' };
   const validationSchema = Yup.object({
     email: Yup.string().required('This field is required'),
     password: Yup.string().required('This field is required'),
@@ -31,8 +31,8 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
   const {mutate, isLoading} = useMutation({
     mutationFn: logInUser,
     //onError: (err) => console.log(err),
-    onSuccess: async () => {
-      navigation.navigate('Main');
+    onSuccess: () => {
+      navigation.navigate('MoviesList');
     },
   });
 
@@ -157,7 +157,7 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
             setTimeout(() => {
               formRef.current?.validateForm();
             }, 10);
-            navigation.navigate('Register');
+            navigation.navigate('AuthRegister');
           }}
         />
       </View>

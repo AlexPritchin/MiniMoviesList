@@ -1,3 +1,4 @@
+import { MovieFormatNameType } from '../../types/moviesTypes';
 import api from '../api/apiClient';
 
 interface LogInParams {
@@ -12,14 +13,27 @@ interface RegisterParams {
   confirmPassword: string;
 }
 
+interface AddMovieParams {
+  title: string;
+  year: number;
+  format: MovieFormatNameType;
+  actors: string[];
+}
+
+interface DeleteMovieParams {
+  movieId: string;
+}
+
+interface ImportMoviesParams {
+  movieFormData: FormData;
+}
+
 const logInUser = async (params: LogInParams) => {
   return api
     .post('sessions', {
       ...params,
     })
-    .then((response) => {
-      console.log(response.data.token);
-    });
+    .then((response) => response.data);
 };
 
 const registerUser = async (params: RegisterParams) => {
@@ -27,9 +41,33 @@ const registerUser = async (params: RegisterParams) => {
     .post('users', {
       ...params,
     })
-    .then((response) => {
-      console.log(response.data.token);
-    });
+    .then((response) => response.data);
 };
 
-export { logInUser, registerUser };
+const addMovie = async (params: AddMovieParams) => {
+  return api
+    .post('movies', {
+      ...params,
+    })
+    .then((response) => response.data);
+};
+
+const deleteMovie = async ({ movieId }: DeleteMovieParams) => {
+  return api
+    .delete(`movies/${movieId}`)
+    .then((response) => response.data);
+};
+
+const importMovies = async ({ movieFormData }: ImportMoviesParams) => {
+  return api
+    .post('movies/import',
+      movieFormData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+    .then((response) => response.data);
+};
+
+export { logInUser, registerUser, addMovie, deleteMovie, importMovies };

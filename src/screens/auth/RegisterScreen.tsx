@@ -11,9 +11,9 @@ import { registerUser } from '../../services/query';
 import FormSubmitButton from '../../components/auth/FormSubmitButton';
 import BottomPressableText from '../../components/auth/BottomPressableText';
 
-import { AuthStackParamList } from '../../routes/types';
+import { MainStackParamList } from '../../routes/types';
 
-type ScreenProps = NativeStackScreenProps<AuthStackParamList, 'Register'>;
+type ScreenProps = NativeStackScreenProps<MainStackParamList, 'AuthRegister'>;
 
 interface RegisterFormValues {
   email: string;
@@ -48,14 +48,14 @@ const RegisterScreen: React.FC<ScreenProps> = ({ navigation }) => {
   const {mutate, isLoading} = useMutation({
     mutationFn: registerUser,
     //onError: (err) => console.log(err),
-    onSuccess: async () => {
-      navigation.navigate('Main');
+    onSuccess: () => {
+      navigation.navigate('MoviesList');
     },
   });
 
   return (
-      <KeyboardAwareScrollView style={{ flex:1 }} showsVerticalScrollIndicator={false}>
-        <View style={{ height: Dimensions.get('window').height }}>
+    <KeyboardAwareScrollView style={{ flex:1 }} showsVerticalScrollIndicator={false}>
+      <View style={{ height: Dimensions.get('window').height }}>
         <Spinner visible={isLoading} />
         <Text
           style={{
@@ -234,8 +234,8 @@ const RegisterScreen: React.FC<ScreenProps> = ({ navigation }) => {
           actionText='Sign In'
           onPress={() => navigation.pop()}
         />
-        </View>
-      </KeyboardAwareScrollView>
+      </View>
+    </KeyboardAwareScrollView>
   );
 };
 
