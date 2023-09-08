@@ -5,14 +5,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import ModalSelector from 'react-native-modal-selector';
 
-import { deleteMovie, getMoviesList } from '../../services/query';
-import { getMovieListItems } from '../../helpers/moviesHelpers';
+import { deleteMovie, getMoviesList, importMovies } from '../../services/query';
+import { getMovieListItems, pickMoviesFileForImport } from '../../helpers/moviesHelpers';
 import FullScreenSpinnerCentered from '../../components/FullScreenSpinnerCentered';
 import BottomFloatingActionButton from '../../components/movies/BottomFloatingActionButton';
 import HeaderButton from '../../components/HeaderButton';
 
 import { MainStackParamList } from '../../routes/types';
 import { MovieItem, MovieListSortNameType } from '../../types/moviesTypes';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 type ScreenProps = NativeStackScreenProps<MainStackParamList, 'MoviesList'>;
 
@@ -20,11 +21,22 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <HeaderButton
-          onPress={() => setSortPickerVisible(true)}
-          iconName='sort'
-          iconSize={30}
-        />
+        <>
+          <HeaderButton
+            onPress={() => setSortPickerVisible(true)}
+            iconName='sort'
+            iconSize={30}
+          />
+          <HeaderButton
+            onPress={async () => {
+              const moviesFileFormData = await pickMoviesFileForImport();
+              if (moviesFileFormData)
+                mutateImport({ movieFormData: moviesFileFormData });
+            }}
+            iconName='file-upload'
+            iconSize={28}
+          />
+        </>
       ),
     })
   }, [navigation]);
@@ -55,7 +67,7 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
   const [sortPickerSelectedKey, setSortPickerSelectedKey] = useState(1);
   const [sortPickerVisible, setSortPickerVisible] = useState(false);
 
-  const {data: moviesList, isLoading} = useQuery(
+  const {data: moviesList, isLoading: listQueryLoading} = useQuery(
     ['moviesList',
       {
         sortBy: sortByOption,
@@ -68,8 +80,16 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
     },
   );
 
-  const {mutate} = useMutation({
+  const {mutate: mutateDelete} = useMutation({
     mutationFn: deleteMovie,
+    //onError: (err) => console.log(err),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({queryKey: ['moviesList']});
+    },
+  });
+
+  const {mutate: mutateImport, isLoading: importMutationLoading} = useMutation({
+    mutationFn: importMovies,
     //onError: (err) => console.log(err),
     onSuccess: async () => {
       await queryClient.invalidateQueries({queryKey: ['moviesList']});
@@ -84,7 +104,7 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
       <Pressable
         style={{ width: 100, justifyContent: 'center', alignItems: 'center', backgroundColor: 'firebrick' }}
         onPress={() => {
-          mutate({ movieId: movieIdToDelete });
+          mutateDelete({ movieId: movieIdToDelete });
         }}
       >
         <Text style={{ fontSize: 20, color: 'white' }}>Delete</Text>
@@ -130,11 +150,12 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
 
   return (
     <>
-      {isLoading
+      {listQueryLoading
       ?
         <FullScreenSpinnerCentered />
       : 
         <>
+          <Spinner visible={importMutationLoading} />
           <ModalSelector
             data={sortPickerData}
             supportedOrientations={['portrait']}

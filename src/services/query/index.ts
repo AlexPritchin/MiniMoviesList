@@ -1,4 +1,4 @@
-import { logInUser, registerUser, addMovie, deleteMovie } from './mutations';
+import { logInUser, registerUser, addMovie, deleteMovie, importMovies } from './mutations';
 import { getMoviesList, getMovieDetails } from './queries';
 
 export {
@@ -6,6 +6,7 @@ export {
   registerUser,
   addMovie,
   deleteMovie,
+  importMovies,
 
   getMoviesList,
   getMovieDetails,

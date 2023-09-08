@@ -24,6 +24,10 @@ interface DeleteMovieParams {
   movieId: string;
 }
 
+interface ImportMoviesParams {
+  movieFormData: FormData;
+}
+
 const logInUser = async (params: LogInParams) => {
   return api
     .post('sessions', {
@@ -54,4 +58,16 @@ const deleteMovie = async ({ movieId }: DeleteMovieParams) => {
     .then((response) => response.data);
 };
 
-export { logInUser, registerUser, addMovie, deleteMovie };
+const importMovies = async ({ movieFormData }: ImportMoviesParams) => {
+  return api
+    .post('movies/import',
+      movieFormData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+    .then((response) => response.data);
+};
+
+export { logInUser, registerUser, addMovie, deleteMovie, importMovies };
