@@ -1,4 +1,6 @@
+import { Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as SecureStore from 'expo-secure-store';
 
 import { MainStackParamList } from './types';
 
@@ -41,8 +43,12 @@ const MainStack: React.FC = () => {
         options={({navigation}) => ({
           headerLeft: () => (
             <HeaderButton
-              onPress={() => navigation.popToTop()}
+              onPress={() => {
+                SecureStore.deleteItemAsync('token');
+                navigation.popToTop();
+              }}
               iconName='logout'
+              style={{ marginRight: Platform.OS === 'android' ? 30 : 0 }}
             />
           ),
           headerTitle: 'Movies List',

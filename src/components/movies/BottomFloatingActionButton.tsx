@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { Platform, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 
 const BottomFloatingActionButton: React.FC<TouchableOpacityProps> = (props) => {
@@ -7,7 +7,7 @@ const BottomFloatingActionButton: React.FC<TouchableOpacityProps> = (props) => {
     <TouchableOpacity
       style={{
         position: 'absolute',
-        bottom: 40,
+        bottom: Platform.OS === 'ios' ? 40 : 30,
         right: 30,
         height: 64,
         width: 64,

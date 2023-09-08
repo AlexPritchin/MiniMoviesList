@@ -1,10 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import { useMutation } from '@tanstack/react-query';
 import Spinner from 'react-native-loading-spinner-overlay';
+import * as SecureStore from 'expo-secure-store';
 
 import { logInUser } from '../../services/query';
 import FormSubmitButton from '../../components/auth/FormSubmitButton';
@@ -20,6 +21,16 @@ interface LoginFormValues {
 }
 
 const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await SecureStore.getItemAsync('token');
+      if (token)
+        navigation.navigate('MoviesList');
+    };
+
+    checkToken();
+  }, []);
+
   const formRef = useRef<FormikProps<LoginFormValues>>(null);
 
   const initialValues: LoginFormValues = { email: 'test1@mail.com', password: 'qwerty' };

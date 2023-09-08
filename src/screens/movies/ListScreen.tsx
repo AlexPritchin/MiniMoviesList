@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Pressable, Text, TouchableHighlight, View } from 'react-native';
+import { Alert, FlatList, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -100,6 +100,7 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
     //onError: (err) => console.log(err),
     onSuccess: async () => {
       await queryClient.invalidateQueries({queryKey: ['moviesList']});
+      Alert.alert('Success', 'Movies from chosen file imported');
     },
   });
 

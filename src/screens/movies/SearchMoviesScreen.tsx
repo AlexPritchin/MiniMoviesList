@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect, useMemo, useState} from 'react';
-import {NativeSyntheticEvent, SafeAreaView, TextInputFocusEventData, View} from 'react-native';
+import {NativeSyntheticEvent, Platform, SafeAreaView, TextInputFocusEventData, View} from 'react-native';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
@@ -65,7 +65,10 @@ const SearchMoviesScreen: React.FC<ScreenProps> = ({navigation}) => {
         autoCapitalize: 'none',
         hideNavigationBar: false,
         hideWhenScrolling: false,
-        placeholder: 'Search by Movie title or Actor name',
+        placeholder: Platform.select({
+          ios: 'Search by Movie title or Actor name',
+          android: 'Search by Title or Actor'
+        }),
         onChangeText: (text) => {
           text.persist();
           debouncedResults(text);
