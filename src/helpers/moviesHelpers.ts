@@ -1,7 +1,7 @@
 import { Platform } from "react-native";
 import * as DocumentPicker from 'expo-document-picker';
 
-import { MovieItem, MovieDetails } from "../types/moviesTypes";
+import { MovieItem, MovieDetails, MovieListPage } from "../types/moviesTypes";
 
 const getMovieListItems = (data: any): MovieItem[] => {
   return (data as Array<any>).map<MovieItem>((dataItem) => {
@@ -45,4 +45,8 @@ const pickMoviesFileForImport = async () => {
   return formData;
 };
 
-export { getMovieListItems, getMovieDetailsItem, pickMoviesFileForImport };
+const getAllMoviesArrayFromPages = (moviesPages?: MovieListPage[]) => {
+  return moviesPages?.flatMap((page) => page.movies);
+};
+
+export { getMovieListItems, getMovieDetailsItem, pickMoviesFileForImport, getAllMoviesArrayFromPages };

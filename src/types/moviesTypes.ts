@@ -16,3 +16,8 @@ export type MovieDetails = {
   format: MovieFormatNameType;
   actors: string[];
 };
+
+export type MovieListPage = {
+  movies: MovieItem[];
+  total: number;
+};

@@ -1,5 +1,8 @@
-import { MovieListOrderNameType, MovieListSortNameType } from '../../types/moviesTypes';
 import api from '../api/apiClient';
+import { MovieListOrderNameType, MovieListSortNameType } from '../../types/moviesTypes';
+import { getMovieListItems } from '../../helpers/moviesHelpers';
+
+const moviesPerPage = 10;
 
 interface MovieListParams {
   queryKey: [
@@ -10,23 +13,39 @@ interface MovieListParams {
       search?: string,
     }
   ];
+  pageParam?: number;
 }
 
 interface MovieDetailsParams {
   queryKey: [string, {movieId: string}];
 }
 
-const getMoviesList = async ({queryKey: [, {order = 'DESC', ...restParams}]}: MovieListParams) => {
+interface MovieSearchListParams {
+  queryKey: [
+    string,
+    {
+      search?: string,
+    }
+  ];
+}
+
+
+const getMoviesList = async ({queryKey: [, {order = 'DESC', ...restParams}], pageParam = 0}: MovieListParams) => {
   return api
     .get('movies',{
       params: {
-        limit: 100,
-        offset: 0,
+        limit: moviesPerPage,
+        offset: pageParam * moviesPerPage,
         order,
         ...restParams
       },
     })
-    .then((response) => response.data.data);
+    .then((response) => {
+      return {
+        movies: getMovieListItems(response.data.data),
+        total: response.data.meta.total,
+      };
+    });
 };
 
 const getMovieDetails = async ({queryKey: [, {movieId}]}: MovieDetailsParams) => {
@@ -35,4 +54,18 @@ const getMovieDetails = async ({queryKey: [, {movieId}]}: MovieDetailsParams) =>
     .then((response) => response.data.data);
 };
 
-export { getMoviesList, getMovieDetails };
+const getMoviesSearchList = async ({queryKey: [, {search}]}: MovieSearchListParams) => {
+  return api
+    .get('movies',{
+      params: {
+        limit: 100,
+        offset: 0,
+        order: 'DESC',
+        search,
+      },
+    })
+    .then((response) => response.data.data);
+};
+
+
+export { getMoviesList, getMovieDetails, getMoviesSearchList, moviesPerPage };

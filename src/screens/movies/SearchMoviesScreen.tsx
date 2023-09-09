@@ -5,7 +5,7 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import debounce from 'lodash.debounce';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
-import { deleteMovie, getMoviesList } from '../../services/query';
+import { deleteMovie, getMoviesSearchList } from '../../services/query';
 import { getMovieListItems } from '../../helpers/moviesHelpers';
 import FullScreenSpinnerCentered from '../../components/FullScreenSpinnerCentered';
 import ListDeleteItemView from '../../components/movies/ListDeleteItemView';
@@ -31,7 +31,7 @@ const SearchMoviesScreen: React.FC<ScreenProps> = ({navigation}) => {
         search: searchText
       }
     ],
-    getMoviesList,
+    getMoviesSearchList,
     {
       select: getMovieListItems,
       enabled: !!searchText,

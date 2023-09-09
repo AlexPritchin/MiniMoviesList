@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Alert, FlatList, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import ModalSelector from 'react-native-modal-selector';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import { deleteMovie, getMoviesList, importMovies } from '../../services/query';
-import { getMovieListItems, pickMoviesFileForImport } from '../../helpers/moviesHelpers';
+import { deleteMovie, getMoviesList, importMovies, moviesPerPage } from '../../services/query';
+import { getAllMoviesArrayFromPages, pickMoviesFileForImport } from '../../helpers/moviesHelpers';
 import HeaderButton from '../../components/HeaderButton';
 import FullScreenSpinnerCentered from '../../components/FullScreenSpinnerCentered';
 import BottomFloatingActionButton from '../../components/movies/BottomFloatingActionButton';
@@ -74,7 +74,16 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
   const [sortPickerSelectedKey, setSortPickerSelectedKey] = useState(1);
   const [sortPickerVisible, setSortPickerVisible] = useState(false);
 
-  const {data: moviesList, isLoading: listQueryLoading} = useQuery(
+  const currentPage = useRef(0);
+
+  const {
+    data: moviesPages,
+    isLoading: listQueryLoading,
+    isFetchingNextPage,
+    isRefetching,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery(
     ['moviesList',
       {
         sort: sortByOption,
@@ -83,9 +92,25 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
     ],
     getMoviesList,
     {
-      select: getMovieListItems,
-    },
+      getNextPageParam: (lastPage, pages) => {
+        const totalPages = Math.ceil(lastPage.total / moviesPerPage);
+        if (currentPage.current === pages?.length-1) {
+          currentPage.current++;
+        }
+        if (currentPage.current >= totalPages) {
+          return undefined;
+        }
+        return currentPage.current;
+      },
+      cacheTime: 0,
+    }
   );
+
+  useEffect(() => {
+    if (isRefetching) {
+      currentPage.current = 0;
+    }
+  }, [isRefetching]);
 
   const {mutate: mutateDelete} = useMutation({
     mutationFn: deleteMovie,
@@ -148,9 +173,21 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
     return <View style={{ height: 1, marginLeft: 45, marginRight: 30, backgroundColor: 'grey' }}/>;
   }
 
+  const renderFooter = () => (
+    <View style={{
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 30,
+      marginBottom: 5,
+    }}>
+      {isFetchingNextPage && <ActivityIndicator />}
+    </View>
+  );
+
   return (
     <>
-      {listQueryLoading
+      {listQueryLoading && !isFetchingNextPage
       ?
         <FullScreenSpinnerCentered />
       : 
@@ -175,7 +212,7 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
             onModalClose={() => setSortPickerVisible(false)}
           />
           <FlatList
-            data={moviesList}
+            data={getAllMoviesArrayFromPages(moviesPages?.pages)}
             renderItem={({item, index}) => renderListItem(item, index)}
             style={{
               backgroundColor: 'white',
@@ -185,6 +222,13 @@ const MoviesListScreen: React.FC<ScreenProps> = ({ navigation }) => {
               backgroundColor: 'white',
             }}
             ItemSeparatorComponent={() => renderSeparator()}
+            ListFooterComponent={renderFooter}
+            onEndReachedThreshold={0.1}
+            onEndReached={() => {
+              if (hasNextPage) {
+                fetchNextPage();
+              }
+            }}
           />
           <BottomFloatingActionButton onPress={() => navigation.navigate('MoviesAddMovie')} />
         </>
