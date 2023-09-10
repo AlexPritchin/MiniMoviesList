@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Pressable,
   PressableProps,
+  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -11,16 +12,13 @@ interface Props extends PressableProps {
   actionText: string;
 }
 
-const BottomPressableText: React.FC<Props> = ({ messageText, actionText, ...rest }) => {
+const BottomPressableText: React.FC<Props> = ({
+  messageText,
+  actionText,
+  ...rest
+}) => {
   return (
-    <View
-      style={{
-        width: '100%',
-        alignItems: 'center',
-        marginTop: 50,
-        marginBottom: 30,
-      }}
-    >
+    <View style={styles.containerView}>
       <Pressable {...rest}>
         <Text>
           {messageText}
@@ -30,5 +28,14 @@ const BottomPressableText: React.FC<Props> = ({ messageText, actionText, ...rest
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  containerView: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 50,
+    marginBottom: 30,
+  },
+});
 
 export default BottomPressableText;

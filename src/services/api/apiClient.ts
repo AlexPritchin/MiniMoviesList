@@ -19,20 +19,18 @@ api.interceptors.request.use(
   },
   function (error) {
     return Promise.reject(error);
-  },
+  }
 );
 
-api.interceptors.response.use(
-  function (response) {
-    if (response.data.status !== 0) {
-      if (response.data.token)
-        SecureStore.setItemAsync('token', response.data.token);
-      return response;
-    }
+api.interceptors.response.use(function (response) {
+  if (response.data.status !== 0) {
+    if (response.data.token)
+      SecureStore.setItemAsync('token', response.data.token);
+    return response;
+  }
 
-    Alert.alert('Error', 'Something went wrong');
-    return Promise.reject(response);
-  },
-);
+  Alert.alert('Error', 'Something went wrong');
+  return Promise.reject(response);
+});
 
 export default api;

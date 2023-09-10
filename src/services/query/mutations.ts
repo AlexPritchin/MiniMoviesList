@@ -53,20 +53,16 @@ const addMovie = async (params: AddMovieParams) => {
 };
 
 const deleteMovie = async ({ movieId }: DeleteMovieParams) => {
-  return api
-    .delete(`movies/${movieId}`)
-    .then((response) => response.data);
+  return api.delete(`movies/${movieId}`).then((response) => response.data);
 };
 
 const importMovies = async ({ movieFormData }: ImportMoviesParams) => {
   return api
-    .post('movies/import',
-      movieFormData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
+    .post('movies/import', movieFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
     .then((response) => response.data);
 };
 

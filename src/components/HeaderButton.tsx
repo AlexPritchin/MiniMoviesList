@@ -7,10 +7,14 @@ interface Props extends TouchableOpacityProps {
   iconSize?: number;
 }
 
-const HeaderButton: React.FC<Props> = ({iconName, iconSize = 26, ...rest}) => {
+const HeaderButton: React.FC<Props> = ({
+  iconName,
+  iconSize = 26,
+  ...rest
+}) => {
   return (
     <TouchableOpacity {...rest}>
-      <MaterialIcons name={iconName} size={iconSize}/>
+      <MaterialIcons name={iconName} size={iconSize} />
     </TouchableOpacity>
   );
 };

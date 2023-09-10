@@ -3,6 +3,6 @@ export type MainStackParamList = {
   AuthRegister: undefined;
   MoviesList: undefined;
   MoviesAddMovie: undefined;
-  MoviesDetails: {id: string; title: string;};
+  MoviesDetails: { id: string; title: string };
   MoviesSearch: undefined;
 };

@@ -1,5 +1,13 @@
 import React from 'react';
-import { Alert, Dimensions, Keyboard, Text, TextInput, View } from 'react-native';
+import {
+  Alert,
+  Dimensions,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -23,12 +31,11 @@ interface RegisterFormValues {
 }
 
 const RegisterScreen: React.FC<ScreenProps> = ({ navigation }) => {
-
   const initialValues: RegisterFormValues = {
     email: '',
     name: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   };
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -45,184 +52,136 @@ const RegisterScreen: React.FC<ScreenProps> = ({ navigation }) => {
       .required('This field is required'),
   });
 
-  const {mutate, isLoading} = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: registerUser,
-    //onError: (err) => console.log(err),
+    onError: (err) => console.log(err),
     onSuccess: () => {
       navigation.navigate('MoviesList');
     },
   });
 
   return (
-    <KeyboardAwareScrollView style={{ flex:1 }} showsVerticalScrollIndicator={false}>
-      <View style={{ height: Dimensions.get('window').height }}>
+    <KeyboardAwareScrollView
+      style={{ flex: 1 }}
+      showsVerticalScrollIndicator={false}>
+      <View style={styles.mainContainer}>
         <Spinner visible={isLoading} />
-        <Text
-          style={{
-            width: '100%',
-            fontSize: 32,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginTop: '20%',
-          }}
-        >
-          Mini Movies List
-        </Text>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ fontSize: 22, fontWeight: '500' }}>
-            Create new account
-          </Text>
+        <Text style={styles.title}>Mini Movies List</Text>
+        <View style={styles.bodyContainer}>
+          <Text style={styles.subtitle}>Create new account</Text>
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             validateOnMount
-            onSubmit={values => {
+            onSubmit={(values) => {
               Keyboard.dismiss();
               if (values.password !== values.confirmPassword) {
-                Alert.alert('Validation error', 'Password and Confirm password must be equal');
+                Alert.alert(
+                  'Validation error',
+                  'Password and Confirm password must be equal'
+                );
                 return;
               }
               mutate({
                 email: values.email,
                 name: values.name,
                 password: values.password,
-                confirmPassword: values.confirmPassword
+                confirmPassword: values.confirmPassword,
               });
-            }}
-          >
-            {({ handleChange, handleBlur, handleSubmit, values, touched, errors, isValid }) => {
+            }}>
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              touched,
+              errors,
+              isValid,
+            }) => {
               const showEmailError = errors.email && touched.email;
               const showNameError = errors.name && touched.name;
               const showPasswordError = errors.password && touched.password;
-              const showConfirmPasswordError = errors.confirmPassword && touched.confirmPassword;
+              const showConfirmPasswordError =
+                errors.confirmPassword && touched.confirmPassword;
 
               return (
-                <View
-                  style={{
-                    width: '100%',
-                    alignItems: 'center',
-                    marginTop: '10%',
-                    paddingHorizontal: '10%',
-                  }}
-                >
+                <View style={styles.formContainer}>
                   <TextInput
                     onChangeText={handleChange('email')}
                     onBlur={handleBlur('email')}
                     value={values.email}
-                    placeholder='email'
-                    keyboardType='email-address'
-                    style={{
-                      borderWidth: 1,
-                      borderColor: showEmailError ? 'red' : 'lightslategrey',
-                      borderRadius: 6,
-                      height: 37,
-                      width: '100%',
-                      paddingLeft: 10,
-                    }}
+                    placeholder="email"
+                    keyboardType="email-address"
+                    style={[
+                      styles.formTextInput,
+                      {
+                        borderColor: showEmailError ? 'red' : 'lightslategrey',
+                      },
+                    ]}
                   />
                   {showEmailError && (
-                    <Text
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        paddingLeft: 10,
-                        color: 'red',
-                        marginTop: 5,
-                      }}
-                    >
-                      {errors.email}
-                    </Text>
+                    <Text style={styles.formErrorText}>{errors.email}</Text>
                   )}
                   <TextInput
                     onChangeText={handleChange('name')}
                     onBlur={handleBlur('name')}
                     value={values.name}
-                    placeholder='User name'
-                    style={{
-                      borderWidth: 1,
-                      borderColor: showNameError ? 'red' : 'lightslategrey',
-                      borderRadius: 6,
-                      height: 37,
-                      width: '100%',
-                      paddingLeft: 10,
-                      marginTop: 30,
-                    }}
+                    placeholder="User name"
+                    style={[
+                      styles.formTextInput,
+                      {
+                        borderColor: showNameError ? 'red' : 'lightslategrey',
+                        marginTop: 30,
+                      },
+                    ]}
                   />
                   {showNameError && (
-                    <Text
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        paddingLeft: 10,
-                        color: 'red',
-                        marginTop: 5,
-                      }}
-                    >
-                      {errors.name}
-                    </Text>
+                    <Text style={styles.formErrorText}>{errors.name}</Text>
                   )}
                   <TextInput
                     onChangeText={handleChange('password')}
                     onBlur={handleBlur('password')}
                     value={values.password}
-                    placeholder='Password'
+                    placeholder="Password"
                     secureTextEntry
-                    style={{
-                      borderWidth: 1,
-                      borderColor: showPasswordError ? 'red' : 'lightslategrey',
-                      borderRadius: 6,
-                      height: 37,
-                      width: '100%',
-                      paddingLeft: 10,
-                      marginTop: 30,
-                    }}
+                    style={[
+                      styles.formTextInput,
+                      {
+                        borderColor: showPasswordError
+                          ? 'red'
+                          : 'lightslategrey',
+                        marginTop: 30,
+                      },
+                    ]}
                   />
                   {showPasswordError && (
-                    <Text
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        paddingLeft: 10,
-                        color: 'red',
-                        marginTop: 5,
-                      }}
-                    >
-                      {errors.password}
-                    </Text>
+                    <Text style={styles.formErrorText}>{errors.password}</Text>
                   )}
                   <TextInput
                     onChangeText={handleChange('confirmPassword')}
                     onBlur={handleBlur('confirmPassword')}
                     value={values.confirmPassword}
-                    placeholder='Confirm password'
+                    placeholder="Confirm password"
                     secureTextEntry
-                    style={{
-                      borderWidth: 1,
-                      borderColor: showConfirmPasswordError ? 'red' : 'lightslategrey',
-                      borderRadius: 6,
-                      height: 37,
-                      width: '100%',
-                      paddingLeft: 10,
-                      marginTop: 30,
-                    }}
+                    style={[
+                      styles.formTextInput,
+                      {
+                        borderColor: showConfirmPasswordError
+                          ? 'red'
+                          : 'lightslategrey',
+                        marginTop: 30,
+                      },
+                    ]}
                   />
                   {showConfirmPasswordError && (
-                    <Text
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        paddingLeft: 10,
-                        color: 'red',
-                        marginTop: 5,
-                      }}
-                    >
+                    <Text style={styles.formErrorText}>
                       {errors.confirmPassword}
                     </Text>
                   )}
                   <FormSubmitButton
                     onPress={() => handleSubmit()}
                     disabled={!isValid}
-                    title='Sign Up'
+                    title="Sign Up"
                   />
                 </View>
               );
@@ -231,12 +190,54 @@ const RegisterScreen: React.FC<ScreenProps> = ({ navigation }) => {
         </View>
         <BottomPressableText
           messageText="Already have an account? "
-          actionText='Sign In'
+          actionText="Sign In"
           onPress={() => navigation.pop()}
         />
       </View>
     </KeyboardAwareScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  mainContainer: {
+    height: Dimensions.get('window').height,
+  },
+  title: {
+    width: '100%',
+    fontSize: 32,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: '20%',
+  },
+  bodyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  subtitle: {
+    fontSize: 22,
+    fontWeight: '500',
+  },
+  formContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: '10%',
+    paddingHorizontal: '10%',
+  },
+  formTextInput: {
+    borderWidth: 1,
+    borderRadius: 6,
+    height: 37,
+    width: '100%',
+    paddingLeft: 10,
+  },
+  formErrorText: {
+    width: '100%',
+    textAlign: 'left',
+    paddingLeft: 10,
+    color: 'red',
+    marginTop: 5,
+  },
+});
 
 export default RegisterScreen;

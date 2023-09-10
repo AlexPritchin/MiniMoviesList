@@ -25,29 +25,28 @@ const MainStack: React.FC = () => {
           fontSize: 24,
         },
         headerBackTitleVisible: false,
-      }}
-    >
+      }}>
       <Stack.Screen
-        name='AuthLogIn'
+        name="AuthLogIn"
         component={LogInScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name='AuthRegister'
+        name="AuthRegister"
         component={RegisterScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name='MoviesList'
+        name="MoviesList"
         component={MoviesListScreen}
-        options={({navigation}) => ({
+        options={({ navigation }) => ({
           headerLeft: () => (
             <HeaderButton
               onPress={() => {
                 SecureStore.deleteItemAsync('token');
                 navigation.popToTop();
               }}
-              iconName='logout'
+              iconName="logout"
               style={{ marginRight: Platform.OS === 'android' ? 30 : 0 }}
             />
           ),
@@ -55,21 +54,21 @@ const MainStack: React.FC = () => {
         })}
       />
       <Stack.Screen
-        name='MoviesAddMovie'
+        name="MoviesAddMovie"
         component={AddMovieScreen}
         options={{
           headerTitle: 'Add new movie',
         }}
       />
       <Stack.Screen
-        name='MoviesDetails'
+        name="MoviesDetails"
         component={MovieDetailsScreen}
-        options={({route}) => ({
+        options={({ route }) => ({
           headerTitle: route.params?.title,
         })}
       />
       <Stack.Screen
-        name='MoviesSearch'
+        name="MoviesSearch"
         component={SearchMoviesScreen}
         options={{
           headerTitle: 'Search movies',

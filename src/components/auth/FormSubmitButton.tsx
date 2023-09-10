@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  StyleSheet,
   Text,
   TouchableOpacity,
   TouchableOpacityProps,
@@ -12,18 +13,23 @@ interface Props extends TouchableOpacityProps {
 const FormSubmitButton: React.FC<Props> = ({ title, ...rest }) => {
   return (
     <TouchableOpacity
-      style={{
-        paddingVertical: 11,
-        paddingHorizontal: 22,
-        borderRadius: 8,
-        backgroundColor: rest.disabled ? 'lightgrey' : 'lightskyblue',
-        marginTop: 30,
-      }}
-      {...rest}
-    >
+      style={[
+        styles.touchable,
+        { backgroundColor: rest.disabled ? 'lightgrey' : 'lightskyblue' },
+      ]}
+      {...rest}>
       <Text style={{ fontSize: 20 }}>{title}</Text>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  touchable: {
+    paddingVertical: 11,
+    paddingHorizontal: 22,
+    borderRadius: 8,
+    marginTop: 30,
+  },
+});
 
 export default FormSubmitButton;
