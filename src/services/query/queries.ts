@@ -1,5 +1,8 @@
 import api from '../api/apiClient';
-import { MovieListOrderNameType, MovieListSortNameType } from '../../types/moviesTypes';
+import {
+  MovieListOrderNameType,
+  MovieListSortNameType,
+} from '../../types/moviesTypes';
 import { getMovieListItems } from '../../helpers/moviesHelpers';
 
 const moviesPerPage = 10;
@@ -8,36 +11,38 @@ interface MovieListParams {
   queryKey: [
     string,
     {
-      sort?: MovieListSortNameType,
-      order?: MovieListOrderNameType,
-      search?: string,
+      sort?: MovieListSortNameType;
+      order?: MovieListOrderNameType;
+      search?: string;
     }
   ];
   pageParam?: number;
 }
 
 interface MovieDetailsParams {
-  queryKey: [string, {movieId: string}];
+  queryKey: [string, { movieId: string }];
 }
 
 interface MovieSearchListParams {
   queryKey: [
     string,
     {
-      search?: string,
+      search?: string;
     }
   ];
 }
 
-
-const getMoviesList = async ({queryKey: [, {order = 'DESC', ...restParams}], pageParam = 0}: MovieListParams) => {
+const getMoviesList = async ({
+  queryKey: [, { order = 'DESC', ...restParams }],
+  pageParam = 0,
+}: MovieListParams) => {
   return api
-    .get('movies',{
+    .get('movies', {
       params: {
         limit: moviesPerPage,
         offset: pageParam * moviesPerPage,
         order,
-        ...restParams
+        ...restParams,
       },
     })
     .then((response) => {
@@ -48,15 +53,17 @@ const getMoviesList = async ({queryKey: [, {order = 'DESC', ...restParams}], pag
     });
 };
 
-const getMovieDetails = async ({queryKey: [, {movieId}]}: MovieDetailsParams) => {
-  return api
-    .get(`movies/${movieId}`)
-    .then((response) => response.data.data);
+const getMovieDetails = async ({
+  queryKey: [, { movieId }],
+}: MovieDetailsParams) => {
+  return api.get(`movies/${movieId}`).then((response) => response.data.data);
 };
 
-const getMoviesSearchList = async ({queryKey: [, {search}]}: MovieSearchListParams) => {
+const getMoviesSearchList = async ({
+  queryKey: [, { search }],
+}: MovieSearchListParams) => {
   return api
-    .get('movies',{
+    .get('movies', {
       params: {
         limit: 100,
         offset: 0,
@@ -66,6 +73,5 @@ const getMoviesSearchList = async ({queryKey: [, {search}]}: MovieSearchListPara
     })
     .then((response) => response.data.data);
 };
-
 
 export { getMoviesList, getMovieDetails, getMoviesSearchList, moviesPerPage };

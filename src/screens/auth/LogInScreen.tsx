@@ -1,5 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { Keyboard, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import {
+  Keyboard,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
@@ -33,15 +40,18 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
 
   const formRef = useRef<FormikProps<LoginFormValues>>(null);
 
-  const initialValues: LoginFormValues = { email: 'test1@mail.com', password: 'qwerty' };
+  const initialValues: LoginFormValues = {
+    email: '',
+    password: '',
+  };
   const validationSchema = Yup.object({
     email: Yup.string().required('This field is required'),
     password: Yup.string().required('This field is required'),
   });
 
-  const {mutate, isLoading} = useMutation({
+  const { mutate, isLoading } = useMutation({
     mutationFn: logInUser,
-    //onError: (err) => console.log(err),
+    onError: (err) => console.log(err),
     onSuccess: () => {
       navigation.navigate('MoviesList');
     },
@@ -49,23 +59,11 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={{ flex:1 }}>
+      <View style={{ flex: 1 }}>
         <Spinner visible={isLoading} />
-        <Text
-          style={{
-            width: '100%',
-            fontSize: 32,
-            fontWeight: 'bold',
-            textAlign: 'center',
-            marginTop: '20%',
-          }}
-        >
-          Mini Movies List
-        </Text>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ fontSize: 22, fontWeight: '500' }}>
-            Log in to proceed
-          </Text>
+        <Text style={styles.title}>Mini Movies List</Text>
+        <View style={styles.bodyContainer}>
+          <Text style={styles.subtitle}>Log in to proceed</Text>
           <Formik
             innerRef={formRef}
             initialValues={initialValues}
@@ -74,86 +72,64 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
             onSubmit={(values, { resetForm, validateForm }) => {
               Keyboard.dismiss();
               setTimeout(() => {
-                mutate({email: values.email, password: values.password});
+                mutate({ email: values.email, password: values.password });
                 resetForm();
                 validateForm();
               }, 10);
-            }}
-          >
-            {({ handleChange, handleBlur, handleSubmit, values, touched, errors, isValid }) => {
+            }}>
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              touched,
+              errors,
+              isValid,
+            }) => {
               const showEmailError = errors.email && touched.email;
               const showPasswordError = errors.password && touched.password;
 
               return (
-                <View
-                  style={{
-                    width: '100%',
-                    alignItems: 'center',
-                    marginTop: '10%',
-                    paddingHorizontal: '10%',
-                  }}
-                >
+                <View style={styles.formContainer}>
                   <TextInput
                     onChangeText={handleChange('email')}
                     onBlur={handleBlur('email')}
                     value={values.email}
-                    placeholder='email'
-                    keyboardType='email-address'
-                    style={{
-                      borderWidth: 1,
-                      borderColor: showEmailError ? 'red' : 'lightslategrey',
-                      borderRadius: 6,
-                      height: 37,
-                      width: '100%',
-                      paddingLeft: 10,
-                    }}
+                    placeholder="email"
+                    keyboardType="email-address"
+                    style={[
+                      styles.formTextInput,
+                      {
+                        borderColor: showEmailError ? 'red' : 'lightslategrey',
+                      },
+                    ]}
                   />
                   {showEmailError && (
-                    <Text
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        paddingLeft: 10,
-                        color: 'red',
-                        marginTop: 5,
-                      }}
-                    >
-                      {errors.email}
-                    </Text>
+                    <Text style={styles.formErrorText}>{errors.email}</Text>
                   )}
                   <TextInput
                     onChangeText={handleChange('password')}
                     onBlur={handleBlur('password')}
                     value={values.password}
-                    placeholder='Password'
+                    placeholder="Password"
                     secureTextEntry
-                    style={{
-                      borderWidth: 1,
-                      borderColor: showPasswordError ? 'red' : 'lightslategrey',
-                      borderRadius: 6,
-                      height: 37,
-                      width: '100%',
-                      paddingLeft: 10,
-                      marginTop: 30,
-                    }}
+                    style={[
+                      styles.formTextInput,
+                      {
+                        borderColor: showPasswordError
+                          ? 'red'
+                          : 'lightslategrey',
+                        marginTop: 30,
+                      },
+                    ]}
                   />
                   {showPasswordError && (
-                    <Text
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        paddingLeft: 10,
-                        color: 'red',
-                        marginTop: 5,
-                      }}
-                    >
-                      {errors.password}
-                    </Text>
+                    <Text style={styles.formErrorText}>{errors.password}</Text>
                   )}
                   <FormSubmitButton
                     onPress={() => handleSubmit()}
                     disabled={!isValid}
-                    title='Sign In'
+                    title="Sign In"
                   />
                 </View>
               );
@@ -162,7 +138,7 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
         </View>
         <BottomPressableText
           messageText="Don't have an account yet? "
-          actionText='Sign Up'
+          actionText="Sign Up"
           onPress={() => {
             formRef.current?.resetForm();
             setTimeout(() => {
@@ -175,5 +151,44 @@ const LogInScreen: React.FC<ScreenProps> = ({ navigation }) => {
     </TouchableWithoutFeedback>
   );
 };
+
+const styles = StyleSheet.create({
+  title: {
+    width: '100%',
+    fontSize: 32,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: '20%',
+  },
+  bodyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  subtitle: {
+    fontSize: 22,
+    fontWeight: '500',
+  },
+  formContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: '10%',
+    paddingHorizontal: '10%',
+  },
+  formTextInput: {
+    borderWidth: 1,
+    borderRadius: 6,
+    height: 37,
+    width: '100%',
+    paddingLeft: 10,
+  },
+  formErrorText: {
+    width: '100%',
+    textAlign: 'left',
+    paddingLeft: 10,
+    color: 'red',
+    marginTop: 5,
+  },
+});
 
 export default LogInScreen;
