@@ -22,15 +22,26 @@ api.interceptors.request.use(
   }
 );
 
-api.interceptors.response.use(function (response) {
-  if (response.data.status !== 0) {
-    if (response.data.token)
-      SecureStore.setItemAsync('token', response.data.token);
-    return response;
-  }
+api.interceptors.response.use(
+  function (response) {
+    if (response.data.status !== 0) {
+      if (response.data.token)
+        SecureStore.setItemAsync('token', response.data.token);
+      return response;
+    }
 
-  Alert.alert('Error', 'Something went wrong');
-  return Promise.reject(response);
-});
+    Alert.alert('Error', 'Something went wrong');
+    return Promise.reject(response);
+  },
+  function (error) {
+    if (!error.status && error.message === 'Network Error') {
+      Alert.alert('Network error', 'Server is unavailable now. Please try again later.');
+    } else {
+      Alert.alert('Error', 'Something went wrong');
+    }
+
+    return Promise.reject(error);
+  },
+);
 
 export default api;
